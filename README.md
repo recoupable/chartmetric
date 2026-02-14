@@ -5,7 +5,7 @@ A skill for AI agents to access music industry analytics via the Chartmetric API
 ## Install
 
 ```bash
-npx skills add Recoupable-com/chartmetric
+npx skills add recoupable/chartmetric
 ```
 
 ## What It Does
