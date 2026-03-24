@@ -7,16 +7,17 @@ Usage:
     python search_artist.py "Drake" --limit 10
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import json
 import argparse
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 
 def search_artist(name: str, limit: int = 5) -> dict:
@@ -24,11 +25,11 @@ def search_artist(name: str, limit: int = 5) -> dict:
     
     Uses the /search endpoint with type=artists.
     """
-    token = get_token()
+    headers = get_auth_headers()
     
     response = requests.get(
         f"{API_BASE}/search",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=headers,
         params={"q": name, "type": "artists", "limit": limit}
     )
     

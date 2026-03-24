@@ -48,16 +48,17 @@ Sort column format: <period>.<stat>
     Stats: sp_monthly_listeners, sp_followers, tt_followers, ig_followers, cpp, etc.
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import json
 import argparse
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 
 def discover_artists(
@@ -86,7 +87,7 @@ def discover_artists(
     
     Returns artists matching the specified criteria with all their metrics.
     """
-    token = get_token()
+    headers = get_auth_headers()
     
     params = {
         "limit": limit,
@@ -143,7 +144,7 @@ def discover_artists(
     
     response = requests.get(
         url,
-        headers={"Authorization": f"Bearer {token}"},
+        headers=headers,
         params=params if not range_params else None
     )
     
@@ -155,7 +156,7 @@ def discover_artists(
         full_url = f"{url}?{base_query}&{range_query}"
         response = requests.get(
             full_url,
-            headers={"Authorization": f"Bearer {token}"}
+            headers=headers
         )
     
     if response.status_code == 402:

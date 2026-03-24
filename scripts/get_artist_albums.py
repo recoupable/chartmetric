@@ -7,24 +7,25 @@ Usage:
     python get_artist_albums.py 3380
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import json
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 
 def get_artist_albums(cm_id: str) -> dict:
     """Fetch artist's albums from Chartmetric."""
-    token = get_token()
+    headers = get_auth_headers()
     
     response = requests.get(
         f"{API_BASE}/artist/{cm_id}/albums",
-        headers={"Authorization": f"Bearer {token}"}
+        headers=headers
     )
     
     if response.status_code == 402:

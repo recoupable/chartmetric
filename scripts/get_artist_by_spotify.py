@@ -8,16 +8,17 @@ Usage:
     python get_artist_by_spotify.py "https://open.spotify.com/artist/3TVXtAsR1Inumwj472S9r4"
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import json
 import re
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 
 def extract_spotify_id(url_or_id: str) -> str:
@@ -35,11 +36,11 @@ def get_artist_by_spotify(spotify_id: str) -> dict:
     Uses the /artist/:type/:id/get-ids endpoint to lookup artist by platform ID.
     Returns the Chartmetric artist ID and other platform IDs.
     """
-    token = get_token()
+    headers = get_auth_headers()
     
     response = requests.get(
         f"{API_BASE}/artist/spotify/{spotify_id}/get-ids",
-        headers={"Authorization": f"Bearer {token}"}
+        headers=headers
     )
     
     if response.status_code == 402:

@@ -28,15 +28,16 @@ Deezer filters: editorial, deezerPartner, chart, hundredPercent, brand,
                 majorCurator, popularIndie, indie
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import argparse
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 # Platform-specific filter support
 PLATFORM_FILTERS = {
@@ -79,7 +80,7 @@ def get_artist_playlists(
         sort_desc: Sort descending
         filters: Dict of boolean filters (editorial, indie, etc.)
     """
-    token = get_token()
+    headers = get_auth_headers()
     
     params = {"limit": limit}
     
@@ -103,7 +104,7 @@ def get_artist_playlists(
     
     response = requests.get(
         f"{API_BASE}/artist/{cm_id}/{platform}/{status}/playlists",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=headers,
         params=params
     )
     

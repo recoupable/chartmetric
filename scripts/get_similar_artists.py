@@ -23,24 +23,25 @@ Configuration options (at least one required when using --by-config):
     --musicality: high, medium, low - Similarity of Musicality
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import argparse
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 
 def get_related_artists(cm_id: str, limit: int = 10) -> dict:
     """Fetch related artists from Chartmetric using basic endpoint."""
-    token = get_token()
+    headers = get_auth_headers()
     
     response = requests.get(
         f"{API_BASE}/artist/{cm_id}/relatedartists",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=headers,
         params={"limit": limit}
     )
     
@@ -72,7 +73,7 @@ def get_similar_artists_by_config(
     At least one of audience, mood, genre, or musicality must be specified.
     Valid values: 'high', 'medium', 'low'
     """
-    token = get_token()
+    headers = get_auth_headers()
     
     params = {"limit": limit, "offset": offset}
     if audience:
@@ -90,7 +91,7 @@ def get_similar_artists_by_config(
     
     response = requests.get(
         f"{API_BASE}/artist/{cm_id}/similar-artists/by-configurations",
-        headers={"Authorization": f"Bearer {token}"},
+        headers=headers,
         params=params
     )
     

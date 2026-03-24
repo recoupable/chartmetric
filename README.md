@@ -36,9 +36,9 @@ python scripts/discover_artists.py --country US --spotify-listeners 100000 50000
 
 ## Requirements
 
-- Chartmetric API subscription
 - Python 3.8+ with `requests` package
-- Set `CHARTMETRIC_REFRESH_TOKEN` environment variable
+- **Recoup sandbox** (recommended): `CHARTMETRIC_BASE_URL` + `RECOUP_API_KEY` injected automatically — 5 credits per call
+- **Direct access** (fallback): Set `CHARTMETRIC_REFRESH_TOKEN` environment variable
 
 ## Documentation
 

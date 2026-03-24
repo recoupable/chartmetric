@@ -9,12 +9,23 @@ Music industry analytics via Python scripts. Get streaming metrics, playlist pla
 
 ## Setup
 
-### With Python (recommended)
+### In a Recoup sandbox (recommended)
+
+`CHARTMETRIC_BASE_URL` and `RECOUP_API_KEY` are injected automatically. Just activate the venv:
 
 ```bash
 cd .recoup/skills/chartmetric
 python3 -m venv .venv && source .venv/bin/activate
 pip install requests
+```
+
+Scripts will use the Recoup API proxy — no Chartmetric token needed. Each API call deducts 5 credits.
+
+### Direct Chartmetric access (fallback)
+
+If `CHARTMETRIC_BASE_URL` is not set, scripts fall back to direct Chartmetric auth:
+
+```bash
 export CHARTMETRIC_REFRESH_TOKEN="your_token"
 ```
 

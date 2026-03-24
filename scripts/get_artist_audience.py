@@ -9,21 +9,22 @@ Usage:
     python get_artist_audience.py 3380 --platform youtube
 
 Environment:
-    CHARTMETRIC_REFRESH_TOKEN - Your Chartmetric refresh token
+    CHARTMETRIC_BASE_URL + RECOUP_API_KEY - Proxy mode (recommended in Recoup sandboxes)
+    CHARTMETRIC_REFRESH_TOKEN - Direct Chartmetric token (fallback if BASE_URL not set)
 """
 
 import sys
 import json
 import argparse
 import requests
-from get_token import get_token
+from get_auth import get_auth_headers, get_api_base
 
-API_BASE = "https://api.chartmetric.com/api"
+API_BASE = get_api_base()
 
 
 def get_artist_audience(cm_id: str, platform: str = "instagram") -> dict:
     """Fetch artist audience demographics from Chartmetric."""
-    token = get_token()
+    headers = get_auth_headers()
     
     endpoint_map = {
         "instagram": f"{API_BASE}/artist/{cm_id}/instagram-audience-stats",
@@ -35,7 +36,7 @@ def get_artist_audience(cm_id: str, platform: str = "instagram") -> dict:
     if not url:
         return {"error": f"Unknown platform: {platform}", "valid_platforms": list(endpoint_map.keys())}
     
-    response = requests.get(url, headers={"Authorization": f"Bearer {token}"})
+    response = requests.get(url, headers=headers)
     
     if response.status_code == 402:
         return {"error": "Payment Required", "message": "Check your Chartmetric subscription."}
